@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanic Survival Prediction - Rasikh Ali</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .form-section, .graph-section, .result-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .form-section h2, .graph-section h2, .result-section h3 {
+            margin-bottom: 20px;
+        }
+        .form-graph-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-section {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .right-section {
+            flex: 1;
+            margin-left: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        .graph-section {
+            margin-bottom: 10px;
+        }
+        .result-section {
+            flex-grow: 1; /* Take remaining space */
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-graph-container">
+            <!-- Form Section (Left) -->
+            <div class="form-section">
+                <h5>Rasikh Ali</h5>
+                <h2>Titanic Survival Prediction</h2>
+                <form id="predictionForm">
+                    <div class="form-group">
+                        <label for="pclass">Ticket Class:</label>
+                        <select name="pclass" id="pclass" class="form-control">
+                            <option value="1">Upper</option>
+                            <option value="2">Middle</option>
+                            <option value="3">Lower</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sex">Gender:</label>
+                        <select name="sex" id="sex" class="form-control">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age:</label>
+                        <input type="number" name="age" id="age" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="sibsp">Number of Siblings/Spouses:</label>
+                        <select name="sibsp" id="sibsp" class="form-control">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="parch">Number of Parents/Children:</label>
+                        <select name="parch" id="parch" class="form-control">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="embarked">Port of Embarkation:</label>
+                        <select name="embarked" id="embarked" class="form-control">
+                            <option value="S">Southampton</option>
+                            <option value="C">Cherbourg</option>
+                            <option value="Q">Queenstown</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="classifier">Classifier:</label>
+                        <select name="classifier" id="classifier" class="form-control">
+                            <option value="svc">Support Vector Machine</option>
+                            <option value="logistic_regression">Logistic Regression</option>
+                            <option value="decision_tree">Decision Tree</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Predict</button>
+                </form>
+            </div>
+
+            <!-- Right Section -->
+            <div class="right-section">
+                <div class="graph-section">
+                    <h2>Classifier Comparison</h2>
+                    <div class="form-group">
+                        <label for="graphType">Select Graph Type:</label>
+                        <select id="graphType" class="form-control">
+                            <option value="accuracy_comparison">Accuracy Comparison (Bar Chart)</option>
+                            <option value="accuracy_distribution">Accuracy Distribution (Pie Chart)</option>
+                            <option value="accuracy_trend">Accuracy Trend (Line Chart)</option>
+                        </select>
+                    </div>
+                    <img id="comparisonGraph" src="static/classifier_accuracy_comparison.png" alt="Classifier Comparison Graph" class="img-fluid">
+                </div>
+
+                <div class="result-section">
+                    <h3>Prediction Result:</h3>
+                    <p id="predictionResult">Please fill in the form to get a prediction.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('predictionForm').addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevent form submission
+
+                // Collect form data
+                const formData = {
+                    pclass: document.getElementById('pclass').value,
+                    sex: document.getElementById('sex').value,
+                    age: document.getElementById('age').value,
+                    sibsp: document.getElementById('sibsp').value,
+                    parch: document.getElementById('parch').value,
+                    embarked: document.getElementById('embarked').value,
+                    classifier: document.getElementById('classifier').value
+                };
+
+                // Send POST request using Fetch API
+                fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update prediction result
+                    document.getElementById('predictionResult').textContent = `Prediction: ${data.result}`;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            // Handle graph type change
+            document.getElementById('graphType').addEventListener('change', function() {
+                const graphType = this.value;
+                const graphSrc = `static/classifier_${graphType}.png`;
+                document.getElementById('comparisonGraph').src = graphSrc;
+            });
+        });
+    </script>
+</body>
+</html>
