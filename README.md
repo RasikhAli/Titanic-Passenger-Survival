@@ -2,11 +2,10 @@
 Predicting survival of Titanic passengers using machine learning classifiers.
 
 ## Features
-```
-    Prediction Form: Allows users to input passenger details and select a classifier for survival prediction.
-    Classifier Comparison: Displays comparison graphs for different classifiers based on accuracy metrics.
-    Prediction Result: Provides the predicted survival outcome for the input passenger details.
-```
+  - Prediction Form: Allows users to input passenger details and select a classifier for survival prediction.
+  - Classifier Comparison: Displays comparison graphs for different classifiers based on accuracy metrics.
+  - Prediction Result: Provides the predicted survival outcome for the input passenger details.
+
 
 ## Installation
 1. Clone the repository
