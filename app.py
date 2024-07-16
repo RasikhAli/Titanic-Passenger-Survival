@@ -144,7 +144,7 @@ def generate_classifier_comparison_charts():
     plt.savefig('static/classifier_accuracy_trend.png')
     plt.close()
 
-# if __name__ == '__main__':
-    # app.run(debug=True)
+if __name__ == '__main__':
+    app.run()
     # port = int(os.environ.get('PORT', 5000))
     # app.run(host='0.0.0.0', port=port)
